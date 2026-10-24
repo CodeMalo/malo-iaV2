@@ -9,8 +9,8 @@
     var d = document.documentElement, q = location.search;
     var os = matchMedia("(prefers-reduced-motion: reduce)").matches;
     var sim = /[?&]motion=os(&|$)/.test(q), full = /[?&]motion=(1|full)(&|$)/.test(q), off = /[?&]motion=0(&|$)/.test(q);
-    if (sim) os = true;
-    if (off) d.classList.add("m-strict"); else if (os && !full) d.classList.add("os-reduce");
+    if (sim) os = true; full = true;
+    if (off) d.classList.add("m-strict");   /* el ajuste del sistema se registra pero no apaga el sitio */
     window.__MOTION = { os: os, full: full, off: off };
   })();</script>
   <meta name="color-scheme" content="dark">

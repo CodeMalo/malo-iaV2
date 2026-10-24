@@ -13,7 +13,7 @@
      bigMotion    = movimiento grande/automatico (suavizado de scroll, auto-avance...): respeta el ajuste del sistema. */
   var M = window.__MOTION || { os: false, full: false, off: false };
   var reduceMotion = !!M.off;
-  var bigMotion = !M.off && (!M.os || M.full);
+  var bigMotion = !M.off;
   function safe(fn) { try { return fn(); } catch (e) { (window.__errs = window.__errs || []).push(String((e && e.message) || e)); } }
   window.addEventListener("error", function (e) { (window.__errs = window.__errs || []).push(String(e.message || e)); });
   var currentRoute = "home";
@@ -54,8 +54,9 @@
     var base = key.split("/").pop().replace(/\.mp4$/i, "");
     return "assets/img/poster-" + base + ".jpg";
   }
+  function isShort(id) { var r = false; DATA.temas.forEach(function (t) { (t.entradas || []).forEach(function (e) { if (ytId(e.youtube) === id && e.short) r = true; }); }); return r; }
   function mediaTag(key) {
-    if (key && key.indexOf("yt:") === 0) return '<img class="yt-thumb" src="' + esc(posterFor(key)) + '" alt="" width="480" height="360" loading="lazy" decoding="async">';
+    if (key && key.indexOf("yt:") === 0) return '<img class="yt-thumb" data-yt="' + esc(key.slice(3)) + '"' + (isShort(key.slice(3)) ? ' data-short="1"' : '') + ' src="' + esc(posterFor(key)) + '" alt="" width="480" height="360" loading="lazy" decoding="async">';
     return '<video class="hoverplay" muted loop playsinline preload="none" poster="' + esc(posterFor(key)) + '" src="' + esc(key) + '"></video>';
   }
   function esNuevo(t) { return (t.entradas || []).some(function (e) { return e.nuevo; }); }
@@ -522,6 +523,7 @@
     }
     heroSigDone = false;
     safe(function () { setupHoverPlay(v); });
+    safe(function () { setupYtPreview(v); });
     safe(function () { staggerReveal(v.querySelectorAll(".reveal-up")); });
     safe(function () { drawSketches(v.querySelectorAll(".draw:not(.signature):not(.firma)")); });
     safe(function () { initPortraitMesh(v.querySelector(".hero")); });
@@ -1215,6 +1217,39 @@
       requestAnimationFrame(frame);
     }
     requestAnimationFrame(frame);
+  }
+
+  /* Mini clip de YouTube en la tarjeta: en celular se reproduce el que esta al centro (uno a la vez, mudo);
+     en computadora, al pasar el mouse. El iframe no recibe toques: el toque abre el post. */
+  function setupYtPreview(scope) {
+    var thumbs = [].slice.call(scope.querySelectorAll("img.yt-thumb[data-yt]"));
+    if (!thumbs.length) return;
+    var live = null;
+    function stop() { if (live) { if (live.parentNode) live.parentNode.removeChild(live); live = null; } }
+    function play(img) {
+      if (live && live.__img === img) return;
+      stop();
+      var box = img.parentNode, f = document.createElement("iframe"), id = img.getAttribute("data-yt");
+      f.className = "yt-live" + (img.getAttribute("data-short") ? " short" : ""); f.setAttribute("tabindex", "-1"); f.setAttribute("aria-hidden", "true"); f.allow = "autoplay; encrypted-media";
+      f.src = "https://www.youtube-nocookie.com/embed/" + id + "?autoplay=1&mute=1&controls=0&loop=1&playlist=" + id + "&playsinline=1&modestbranding=1&rel=0&disablekb=1&fs=0&iv_load_policy=3";
+      f.__img = img; box.appendChild(f); live = f;
+    }
+    if (window.matchMedia("(hover: none)").matches && "IntersectionObserver" in window) {
+      var vis = new Map(), pick = null;
+      var io = new IntersectionObserver(function (es) {
+        es.forEach(function (e) { if (e.isIntersecting) vis.set(e.target, e.intersectionRatio); else vis.delete(e.target); });
+        var best = null, br = 0.6; vis.forEach(function (r, n) { if (r >= br) { best = n; br = r; } });
+        if (best) { if (best !== pick) { pick = best; clearTimeout(io.__t); io.__t = setTimeout(function () { if (pick) play(pick); }, 700); } }
+        else { pick = null; clearTimeout(io.__t); stop(); }
+      }, { threshold: [0, 0.3, 0.6, 0.85] });
+      thumbs.forEach(function (n) { io.observe(n); });
+    } else {
+      thumbs.forEach(function (img) {
+        var card = img.closest(".card") || img.closest(".plate") || img.closest(".hof-card") || img.parentNode;
+        card.addEventListener("mouseenter", function () { play(img); });
+        card.addEventListener("mouseleave", stop);
+      });
+    }
   }
 
   function setupHoverPlay(scope) {
