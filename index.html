@@ -5,6 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>malo_ia — the vault</title>
   <meta name="description" content="A living archive about artificial intelligence: docs, videos and links I find and learn, sorted by topic.">
+  <script>(function () {
+    var d = document.documentElement, q = location.search;
+    var os = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var sim = /[?&]motion=os(&|$)/.test(q), full = /[?&]motion=(1|full)(&|$)/.test(q), off = /[?&]motion=0(&|$)/.test(q);
+    if (sim) os = true;
+    if (off) d.classList.add("m-strict"); else if (os && !full) d.classList.add("os-reduce");
+    window.__MOTION = { os: os, full: full, off: off };
+  })();</script>
   <meta name="color-scheme" content="dark">
   <meta name="theme-color" content="#0c1019">
 
