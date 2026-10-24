@@ -1,0 +1,22 @@
+# malo_ia — sitio estático, sin build.
+# Si conectas este repo en Netlify, pon "Base directory: malo-ia" (si el repo
+# es el padre) o déjalo vacío si este folder es la raíz del repo.
+
+[build]
+  publish = "."
+  command = ""
+
+[[headers]]
+  for = "/assets/fonts/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/assets/img/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+
+[[headers]]
+  for = "/media/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"

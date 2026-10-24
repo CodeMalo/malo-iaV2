@@ -1,0 +1,11 @@
+.DS_Store
+Thumbs.db
+*.log
+node_modules/
+.vercel
+.netlify
+.cache/
+
+# carpetas temporales del panel (no referenciadas por el sitio)
+assets/img/slides/draft-*/
+assets/img/slides/reusable-instructions-for-coding-agents/

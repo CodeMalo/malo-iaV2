@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>malo_ia — the vault</title>
+  <meta name="description" content="A living archive about artificial intelligence: docs, videos and links I find and learn, sorted by topic.">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#0c1019">
+
+  <meta property="og:title" content="malo_ia — the vault">
+  <meta property="og:description" content="A living archive about artificial intelligence, sorted by topic.">
+  <meta property="og:type" content="website">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap">
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body class="loading">
+  <a class="skip" href="#app">Skip to content</a>
+
+  <div id="loader" aria-hidden="true">
+    <svg class="loader-mark" viewBox="0 0 120 80" fill="none">
+      <path d="M18 64 L18 30 Q18 20 29 20 Q40 20 40 31 L40 64 M40 33 Q40 21 52 21 Q64 21 64 33 L64 64"/>
+      <path d="M74 64 L98 64"/>
+      <circle cx="108" cy="24" r="4"/>
+    </svg>
+    <div class="loader-bar"><i></i></div>
+    <div class="loader-label">opening the vault</div>
+  </div>
+
+  <header class="site-header" id="site-header">
+    <div class="wrap">
+      <a class="brand" href="#/" aria-label="malo_ia, home">
+        <b>malo</b><b class="ia">_ia</b><span class="cursor" aria-hidden="true"></span>
+      </a>
+      <nav class="nav" aria-label="Main navigation">
+        <a href="#/">index</a>
+        <a href="#/acerca" class="pill">about</a>
+      </nav>
+    </div>
+  </header>
+
+  <div id="app"><!-- las vistas se montan aquí --></div>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-cols">
+        <nav class="fcol" aria-label="Pages">
+          <h3>Pages</h3>
+          <a href="#/">Index</a>
+          <a href="#/acerca">About</a>
+        </nav>
+        <nav class="fcol" aria-label="Archive">
+          <h3>Archive</h3>
+          <a href="#temas">Topics</a>
+          <a href="#/acerca">The vault</a>
+        </nav>
+        <div class="fcol">
+          <h3>The project</h3>
+          <span>A living archive of artificial intelligence.</span>
+          <span class="muted">What I find, learn and share.</span>
+        </div>
+      </div>
+      <div class="big" aria-hidden="true">always<br>learning<span class="hl">.</span></div>
+      <div class="footer-row">
+        <span>© 2026 malo_ia · the vault</span>
+        <div class="footer-links">
+          <a href="#/">index</a>
+          <a href="#/acerca">about</a>
+        </div>
+        <span>living archive · artificial intelligence</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/lib/lenis.min.js"></script>
+  <script src="assets/lib/words.js"></script>
+  <script src="assets/data.js"></script>
+  <script src="assets/posts.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>
