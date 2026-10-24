@@ -1011,9 +1011,9 @@ body.route-post .site-header.solid { --hdr-fg: var(--ink-900); --hdr-accent: var
 @media (min-width: 861px) {
   .phero { display: grid; grid-template-columns: minmax(0, 1fr) clamp(240px, 31vw, 500px); column-gap: 3vw; grid-template-rows: auto auto auto 1fr; align-content: start; }
   .phero .back { grid-column: 1 / -1; grid-row: 1; }
-  .ptitle, .ptitle.long { grid-column: 1 / -1; grid-row: 2; max-width: none; }
+  .ptitle, .ptitle.long { grid-column: 1; grid-row: 2; max-width: none; }
   .pmeta { grid-column: 1; grid-row: 3; }
-  .pcover { position: relative; right: auto; top: auto; grid-column: 2; grid-row: 3 / 5; width: 100%; margin: -14vh 0 0; align-self: start; }
+  .pcover { position: relative; right: auto; top: auto; grid-column: 2; grid-row: 2 / 5; width: 100%; margin: 4vh 0 0; align-self: start; }
   .pbottom { grid-column: 1; grid-row: 4; align-self: end; padding-top: 4vh; }
 }
 .river-track > .ri:not(.ri-photo):nth-child(odd) { margin-top: -14vh; }
@@ -1037,3 +1037,28 @@ h1.sx-title { margin: 0; font: inherit; }
 .loader-label, .kicker, .eyebrow, .track-k, .card-badge, .card-cap, .card-cap .mono, .cap, .story-cap, .rslide-cap, .latest .k, .latest .m, .count, .card-go, .entry-meta, .tag { font-size: max(.75rem, 12px); }
 .story-cap, .rslide-cap { letter-spacing: .1em; }
 figcaption, .plate .cap, .nav a, .nav .pill, .brand .cursor + * { font-size: max(.75rem, 12px); }
+
+/* Pasada movil: mas aire entre piezas, y en una columna cada pieza respira */
+.river-track { gap: clamp(96px, 10vw, 170px); }
+.river.is-static .river-track { gap: 3.5rem; padding: 3rem var(--gutter) 4rem; }
+.river.is-static .ri-photo { margin: 0; }
+.river.is-static .ri-photo img { width: 100%; max-height: none; aspect-ratio: auto; height: auto; }
+.river.is-static .ri-text p { font-size: 1.1rem; }
+.river.is-static .ri-h { font-size: clamp(2rem, 9vw, 2.8rem); }
+.river.is-static .ri-big { font-size: clamp(1.9rem, 8vw, 2.6rem); }
+.river.is-static .ri-quote p { font-size: clamp(1.9rem, 8vw, 2.6rem); }
+.river.is-static .ri-video.is-short { max-width: 340px; }
+.river.is-static .ri-cap { font-size: .76rem; }
+
+/* El titular nunca se sale de la pantalla: el tamano se limita por su palabra mas larga */
+.ptitle { font-size: min(var(--ts, 8vw), calc((100vw - 2 * var(--gutter)) / (var(--lw, 8) * 0.72))); overflow-wrap: anywhere; }
+@media (min-width: 861px) { .ptitle { font-size: min(var(--ts, 8vw), calc(60vw / (var(--lw, 8) * 0.72))); } }
+@media (max-width: 860px) { .ptitle { font-size: min(clamp(3rem, 15vw, 6rem), calc((100vw - 2 * var(--gutter)) / (var(--lw, 8) * 0.72))) !important; } }
+
+/* Las imagenes del rio conservan SU proporcion: el atributo height solo reserva espacio, no manda sobre la altura */
+.ri-photo img { height: auto; object-fit: contain; max-height: 74vh; }
+.ri-photo.ri-s img, .ri-photo.ri-m img, .ri-photo.ri-l img { height: auto; }
+
+/* Con limite de alto, la imagen reduce tambien su ancho (misma forma siempre): width/height auto + max-*  */
+.ri-photo img { width: auto; max-width: 100%; height: auto; max-height: 74vh; object-fit: fill; }
+.river.is-static .ri-photo img { width: 100%; max-width: 100%; max-height: none; }

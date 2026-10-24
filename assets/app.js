@@ -669,19 +669,20 @@
 
     var cv = t.portada || (cover(t) ? posterFor(cover(t)) : "") || (t.carrusel && t.carrusel[0] && t.carrusel[0].img) || "";
     var len = String(t.titulo || "").length;
-    var ts = len <= 14 ? "clamp(4rem, 14vw, 13rem)" : len <= 30 ? "clamp(2.8rem, 8.2vw, 8rem)" : len <= 50 ? "clamp(2.2rem, 6vw, 5.8rem)" : "clamp(2rem, 4.6vw, 4.4rem)";
+    var lw = String(t.titulo || "").split(/\s+/).reduce(function (m, w) { return Math.max(m, w.length); }, 4);
+    var ts = len <= 14 ? "clamp(3.4rem, 11vw, 10.5rem)" : len <= 30 ? "clamp(2.6rem, 7.2vw, 7rem)" : len <= 50 ? "clamp(2.2rem, 5.2vw, 5rem)" : "clamp(2rem, 4vw, 3.8rem)";
 
     var v = el(
       '<div class="view"><article class="post sec-light">' +
         topo({ cls: "", cx: 0.5, cy: 0.35, rings: 7 }) +
         '<section class="phero">' +
           '<a class="back" href="#/"><span class="arr" aria-hidden="true">&larr;</span> back to the index</a>' +
-          '<h1 class="ptitle' + (len > 14 ? " long" : "") + '" data-palabras style="--ts:' + ts + '">' + heroTitle(t.titulo) + "</h1>" +
+          '<h1 class="ptitle' + (len > 14 ? " long" : "") + '" data-palabras style="--ts:' + ts + ';--lw:' + lw + '">' + heroTitle(t.titulo) + "</h1>" +
           (cv ? '<figure class="pcover"><img src="' + esc(cv) + '" alt="' + esc(t.titulo) + '" width="800" height="1000" fetchpriority="high" decoding="async"></figure>' : "") +
           '<div class="pmeta"><span>malo_ia</span><span>' + esc(fecha(t.actualizado)) + "</span><span>" + readMins(t) + " min read</span>" +
             (t.tags || []).slice(0, 3).map(function (g) { return "<span>#" + esc(g) + "</span>"; }).join("") + "</div>" +
           '<div class="pbottom"><div class="plede-wrap"><p class="plede">' + ledeHtml(t.descripcion || t.resumen) + '</p><span class="psig">' + SIGNATURE_SCRAWL + "</span></div>" +
-            (t.resumen ? '<p class="pnote">' + esc(t.resumen) + "</p>" : "") + "</div>" +
+            (t.resumen && t.resumen !== (t.descripcion || t.resumen) ? '<p class="pnote">' + esc(t.resumen) + "</p>" : "") + "</div>" +
         "</section>" +
         '<section class="river" aria-label="The story, scroll to read">' +
           '<div class="river-stage"><div class="river-track">' + riverItems(t, botones.join("")) + "</div>" +
@@ -714,9 +715,24 @@
   function initRiver(v) {
     var sec = v.querySelector(".river"); if (!sec) return;
     var track = sec.querySelector(".river-track");
-    if (reduceMotion || window.matchMedia("(max-width: 860px)").matches) { sec.classList.add("is-static"); return; }
-    function size() { if (!sec.isConnected) return; sec.style.height = Math.max(0, track.scrollWidth - window.innerWidth) + window.innerHeight + "px"; onScroll(); }
-    size();
+    var mq = window.matchMedia("(max-width: 860px)");
+    function size() {
+      if (!sec.isConnected || sec.classList.contains("is-static")) return;
+      sec.style.height = Math.max(0, track.scrollWidth - window.innerWidth) + window.innerHeight + "px";
+      sec.__gap = parseFloat(getComputedStyle(track).columnGap) || 88;
+      onScroll();
+    }
+    function apply() {
+      if (!sec.isConnected) return;
+      var stat = reduceMotion || mq.matches;           // celular o "menos movimiento": una columna vertical
+      sec.classList.toggle("is-static", stat);
+      if (stat) {
+        sec.style.height = ""; track.style.transform = "";
+        [].forEach.call(sec.querySelectorAll("[data-par]"), function (n) { n.style.transform = ""; });
+      } else size();
+    }
+    apply();
+    if (mq.addEventListener) mq.addEventListener("change", apply); else if (mq.addListener) mq.addListener(apply);
     if ("ResizeObserver" in window) new ResizeObserver(size).observe(track);
     window.addEventListener("resize", size);
     [].forEach.call(track.querySelectorAll("img"), function (im) { if (!im.complete) im.addEventListener("load", size, { once: true }); });
@@ -1278,8 +1294,8 @@
       var rpr = span > 0 ? Math.min(1, Math.max(0, -river.getBoundingClientRect().top / span)) : 0;
       rt.style.transform = "translate3d(" + (-rpr * maxX).toFixed(1) + "px,0,0)";
       river.style.setProperty("--rp", rpr.toFixed(4));
-      var pis = river.querySelectorAll("[data-par]");
-      for (var pk = 0; pk < pis.length; pk++) pis[pk].style.transform = "translate3d(" + (parseFloat(pis[pk].getAttribute("data-par")) * rpr * maxX).toFixed(1) + "px,0,0)";
+      var pis = river.querySelectorAll("[data-par]"), cap = (river.__gap || 88) * 0.3;
+      for (var pk = 0; pk < pis.length; pk++) pis[pk].style.transform = "translate3d(" + Math.max(-cap, Math.min(cap, parseFloat(pis[pk].getAttribute("data-par")) * rpr * maxX)).toFixed(1) + "px,0,0)";
     }
     // scroll-expand integrado: A) crece + titulo se parte  B) gris + banners + firma
     var track = document.querySelector(".hero.scrollx");
